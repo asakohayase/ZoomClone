@@ -1,11 +1,7 @@
 import { ReactNode } from "react";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
-  return (
-    <main>
-      <div>{children}</div>
-    </main>
-  );
+  return <main>{children}</main>;
 };
 
 export default RootLayout;
