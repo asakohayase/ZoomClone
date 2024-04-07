@@ -1,13 +1,6 @@
 import Image from "next/image";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MeetingModalProps } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -41,9 +34,12 @@ export const MeetingModal = ({
             onClick={handleClick}
           >
             {buttonIcon && (
-              <Image src={buttonIcon} alt="button icon" width={13} height={13}>
-                {buttonIcon}
-              </Image>
+              <Image
+                src={buttonIcon}
+                alt="button icon"
+                width={13}
+                height={13}
+              />
             )}
             &nbsp;
             {buttonText || "Schedule Meeting"}
