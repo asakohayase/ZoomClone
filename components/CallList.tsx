@@ -3,13 +3,16 @@
 import { useRouter } from "next/navigation";
 
 import { useGetCalls } from "@/hooks/useGetCalls";
-import { CallRecording } from "@stream-io/video-react-sdk";
+import { Call, CallRecording } from "@stream-io/video-react-sdk";
 import { useState } from "react";
+import MeetingCard from "./MeetingCard";
+import Loader from "./Loader";
 
 const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
-  const { endedCalls, upcomingCalls, recordings, isLoading } = useGetCalls();
+  const { endedCalls, upcomingCalls, callRecordings, isLoading } =
+    useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
-  const router = useRouter;
+  const router = useRouter();
 
   const getCalls = () => {
     switch (type) {
@@ -37,7 +40,53 @@ const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
     }
   };
 
-  return <div>CallList</div>;
+  const calls = getCalls();
+  console.log(upcomingCalls);
+  const noCallsMessage = getNoCallsMessage();
+
+  if (isLoading) return <Loader />;
+
+  return (
+    <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+      {calls && calls.length > 0 ? (
+        calls.map((meeting: Call | CallRecording) => (
+          <MeetingCard
+            key={(meeting as Call)?.id}
+            title={
+              (meeting as Call)?.state.custom.description.substring(0, 26) ||
+              "No Desctiption"
+            }
+            date={
+              (meeting as Call)?.state.startsAt?.toLocaleString() ||
+              (meeting as CallRecording)?.start_time?.toLocaleString()
+            }
+            icon={
+              type === "ended"
+                ? "/icons/previous.svg"
+                : type === "upcoming"
+                  ? "/icons/upcoming.svg"
+                  : "/icons/recordings.svg"
+            }
+            isPreviousMeeting={type === "ended"}
+            buttonIcon1={type === "recordings" ? "/icons/play.svg" : undefined}
+            buttonText={type === "recordings" ? "Play" : "Start"}
+            handleClick={
+              type === "recordings"
+                ? () => router.push((meeting as CallRecording).url)
+                : () => router.push(`/meeging/${(meeting as Call).id}`)
+            }
+            link={
+              type === "recordings"
+                ? (meeting as CallRecording).url
+                : `${process.env.NEXT_PUBLIC_BASE_URL}/meeging/${(meeting as Call).id}`
+            }
+          />
+        ))
+      ) : (
+        <h1>{noCallsMessage}</h1>
+      )}
+    </div>
+  );
 };
 
 export default CallList;
