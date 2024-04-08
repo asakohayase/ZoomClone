@@ -41,7 +41,7 @@ const PersonalRoom = () => {
         data: { starts_at: new Date().toISOString() },
       });
     }
-    router.push(`/meeting/${meetingId}personal=true`);
+    router.push(`/meeting/${meetingId}?personal=true`);
   };
 
   return (
